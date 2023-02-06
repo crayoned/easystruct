@@ -10,7 +10,7 @@ go install github.com/crayoned/easystruct@latest
 easystruct model.go
 ```
 
-Generates new function `FromRequest` for for all structs in specific file to mapping request into struct. 
+Generates new function `FromRequest` for all structs in specific file to mapping request into struct. 
 
 Supported data source: 
 - header - req.Header
@@ -19,8 +19,8 @@ Supported data source:
 
 Supported types:
 - all primitive numbers(ints, uints, floats)
-- string
-- booleans
+- string, []byte, []rune
+- bool
 
 
 Struct fields have to contain tag description with name `es`. Tag template `data_source=data_name`. For example:

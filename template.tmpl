@@ -12,7 +12,7 @@ func({{ $st.Receiver }} *{{ .Name }}) FromRequest(r *http.Request) error {
 	{{ range .Fields -}}
 	{{- if eq .Kind "varchar" -}}
 	if sval := {{ .Source }}; sval != "" {
-		{{ $st.Receiver }}.{{ .Name }} = sval
+		{{ $st.Receiver }}.{{ .Name }} = {{ .Type }}(sval)
 	}
 	{{- end -}}
 	{{- if eq .Kind "integer" -}} 

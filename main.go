@@ -76,14 +76,16 @@ func main() {
 				}
 
 				switch ft := item.Type.(type) {
-				default:
-					continue FIELDS
 				case *ast.Ident:
 					field.Type = ft.Name
+				case *ast.ArrayType:
+					if typ, ok := ft.Elt.(*ast.Ident); ok {
+						field.Type = fmt.Sprintf("[]%s", typ.Name)
+					}
 				}
 
 				switch field.Type {
-				case "string":
+				case "string", "[]byte", "[]rune":
 					field.Kind = "varchar"
 				case "int", "int8", "int16", "int32", "int64", "uint", "uint8", "uint16", "uint32", "uint64":
 					field.Kind = "integer"
