@@ -42,6 +42,11 @@ func({{ $st.Receiver }} *{{ .Name }}) FromRequest(r *http.Request) error {
 		{{ $st.Receiver }}.{{ .Name }} = value
 	}	
 	{{- end }}
+	{{- if eq .Kind "strings" -}} 
+	if sval := {{ .Source }}; sval != "" {
+		{{ $st.Receiver }}.{{ .Name }} = strings.Split(sval, ",")
+	}	
+	{{- end }}
 	{{ end -}}
 	return nil
 }

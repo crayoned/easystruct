@@ -19,7 +19,7 @@ Supported data source:
 
 Supported types:
 - all primitive numbers(ints, uints, floats)
-- string, []byte, []rune
+- string, []string, []byte, []rune
 - bool
 
 

@@ -96,6 +96,9 @@ func main() {
 				case "bool":
 					field.Kind = "boolean"
 					data.Imports["strconv"] = struct{}{}
+				case "[]string":
+					field.Kind = "strings"
+					data.Imports["strings"] = struct{}{}
 				default:
 					continue FIELDS
 				}
