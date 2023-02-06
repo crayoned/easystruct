@@ -47,6 +47,42 @@ func({{ $st.Receiver }} *{{ .Name }}) FromRequest(r *http.Request) error {
 		{{ $st.Receiver }}.{{ .Name }} = strings.Split(sval, ",")
 	}	
 	{{- end }}
+	{{- if eq .Kind "integers" -}} 
+	if svals := {{ .Source }}; svals != "" {
+		{{ $st.Receiver }}.{{ .Name }} = make([]{{ .Type }}, 0, strings.Count(svals, ","))
+		for _, sval := range strings.Split(svals, ",") {
+			nval, err := strconv.Atoi(sval)
+			if err != nil {
+				return fmt.Errorf({{ .Error }}, err)
+			}
+			{{ $st.Receiver }}.{{ .Name }} = append({{ $st.Receiver }}.{{ .Name }}, {{ .Type }}(nval))
+		}
+	}	
+	{{- end }}
+	{{- if eq .Kind "doubles" -}} 
+	if svals := {{ .Source }}; svals != "" {
+		{{ $st.Receiver }}.{{ .Name }} = make([]{{ .Type }}, 0, strings.Count(svals, ","))
+		for _, sval := range strings.Split(svals, ",") {
+			nval, err := strconv.ParseFloat(sval, 64)
+			if err != nil {
+				return fmt.Errorf({{ .Error }}, err)
+			}
+			{{ $st.Receiver }}.{{ .Name }} = append({{ $st.Receiver }}.{{ .Name }}, {{ .Type }}(nval))
+		}
+	}	
+	{{- end }}
+	{{- if eq .Kind "booleans" -}} 
+	if svals := {{ .Source }}; svals != "" {
+		{{ $st.Receiver }}.{{ .Name }} = make([]{{ .Type }}, 0, strings.Count(svals, ","))
+		for _, sval := range strings.Split(svals, ",") {
+			bval, err := strconv.ParseBool(sval)
+			if err != nil {
+				return fmt.Errorf({{ .Error }}, err)
+			}
+			{{ $st.Receiver }}.{{ .Name }} = append({{ $st.Receiver }}.{{ .Name }}, bval)
+		}
+	}	
+	{{- end }}
 	{{ end -}}
 	return nil
 }

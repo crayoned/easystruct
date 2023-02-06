@@ -19,6 +19,7 @@ Supported data source:
 
 Supported types:
 - all primitive numbers(ints, uints, floats)
+- slice of all primitive numbers
 - string, []string, []byte, []rune
 - bool
 
@@ -40,7 +41,7 @@ func(sr *SearchRequest) FromRequest(r *http.Request) error {
 	if sval := r.URL.Query().Get("limit"); sval != "" {
 		nval, err := strconv.Atoi(sval)
 		if err != nil {
-			return err
+			return fmt.Errorf("query:limit: %w", err)
 		}
 		sr.Limit = int(nval)
 	}
