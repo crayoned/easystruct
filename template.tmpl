@@ -19,7 +19,7 @@ func({{ $st.Receiver }} *{{ .Name }}) FromRequest(r *http.Request) error {
 	if sval := {{ .Source }}; sval != "" {
 		nval, err := strconv.Atoi(sval)
 		if err != nil {
-			return err
+			return fmt.Errorf({{ .Error }}, err)
 		}
 		{{ $st.Receiver }}.{{ .Name }} = {{ .Type }}(nval)
 	}	
@@ -28,18 +28,18 @@ func({{ $st.Receiver }} *{{ .Name }}) FromRequest(r *http.Request) error {
 	if sval := {{ .Source }}; sval != "" {
 		nval, err := strconv.ParseFloat(sval, 64)
 		if err != nil {
-			return err
+			return fmt.Errorf({{ .Error }}, err)
 		}
 		{{ $st.Receiver }}.{{ .Name }} = {{ .Type }}(nval)
 	}	
 	{{- end }}
 	{{- if eq .Kind "boolean" -}} 
 	if sval := {{ .Source }}; sval != "" {
-		value, err := strconv.ParseBool(sval)
+		bval, err := strconv.ParseBool(sval)
 		if err != nil {
-			return err
+			return fmt.Errorf({{ .Error }}, err)
 		}
-		{{ $st.Receiver }}.{{ .Name }} = value
+		{{ $st.Receiver }}.{{ .Name }} = bval
 	}	
 	{{- end }}
 	{{- if eq .Kind "strings" -}} 

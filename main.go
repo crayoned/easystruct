@@ -62,7 +62,9 @@ func main() {
 					continue
 				}
 
-				var field fieldData
+				field := fieldData{
+					Error: fmt.Sprintf("\"%s:%s: %%w\"", source, name),
+				}
 
 				switch source {
 				case "query":
@@ -89,12 +91,15 @@ func main() {
 					field.Kind = "varchar"
 				case "int", "int8", "int16", "int32", "int64", "uint", "uint8", "uint16", "uint32", "uint64":
 					field.Kind = "integer"
+					data.Imports["fmt"] = struct{}{}
 					data.Imports["strconv"] = struct{}{}
 				case "float64", "float32":
 					field.Kind = "double"
+					data.Imports["fmt"] = struct{}{}
 					data.Imports["strconv"] = struct{}{}
 				case "bool":
 					field.Kind = "boolean"
+					data.Imports["fmt"] = struct{}{}
 					data.Imports["strconv"] = struct{}{}
 				case "[]string":
 					field.Kind = "strings"
@@ -151,6 +156,7 @@ type structData struct {
 }
 
 type fieldData struct {
+	Error        string
 	Name, Type   string
 	Source, Kind string
 }
