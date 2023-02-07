@@ -63,7 +63,8 @@ func main() {
 				}
 
 				field := fieldData{
-					Error: fmt.Sprintf("\"%s:%s: %%w\"", source, name),
+					Receiver: onlyUppers(ts.Name.Name),
+					Error:    fmt.Sprintf("\"%s:%s: %%w\"", source, name),
 				}
 
 				switch source {
@@ -92,36 +93,27 @@ func main() {
 				case "[]int", "[]int8", "[]int16", "[]int32", "[]int64", "[]uint", "[]uint8", "[]uint16", "[]uint32", "[]uint64":
 					field.Kind = "integers"
 					field.Type = strings.TrimPrefix(field.Type, "[]")
-					data.Imports["fmt"] = struct{}{}
-					data.Imports["strings"] = struct{}{}
-					data.Imports["strconv"] = struct{}{}
+					data.Import("fmt", "strings", "strconv")
 				case "int", "int8", "int16", "int32", "int64", "uint", "uint8", "uint16", "uint32", "uint64":
 					field.Kind = "integer"
-					data.Imports["fmt"] = struct{}{}
-					data.Imports["strconv"] = struct{}{}
+					data.Import("fmt", "strconv")
 				case "[]float64", "[]float32":
 					field.Kind = "doubles"
 					field.Type = strings.TrimPrefix(field.Type, "[]")
-					data.Imports["fmt"] = struct{}{}
-					data.Imports["strings"] = struct{}{}
-					data.Imports["strconv"] = struct{}{}
+					data.Import("fmt", "strings", "strconv")
 				case "float64", "float32":
 					field.Kind = "double"
-					data.Imports["fmt"] = struct{}{}
-					data.Imports["strconv"] = struct{}{}
+					data.Import("fmt", "strconv")
 				case "bool":
 					field.Kind = "boolean"
-					data.Imports["fmt"] = struct{}{}
-					data.Imports["strconv"] = struct{}{}
+					data.Import("fmt", "strconv")
 				case "[]bool":
 					field.Kind = "booleans"
 					field.Type = strings.TrimPrefix(field.Type, "[]")
-					data.Imports["fmt"] = struct{}{}
-					data.Imports["strings"] = struct{}{}
-					data.Imports["strconv"] = struct{}{}
+					data.Import("fmt", "strings", "strconv")
 				case "[]string":
 					field.Kind = "strings"
-					data.Imports["strings"] = struct{}{}
+					data.Import("strings")
 				default:
 					continue FIELDS
 				}
@@ -167,6 +159,14 @@ type fileData struct {
 	Structs []structData
 }
 
+func (fd *fileData) Import(pkgs ...string) {
+	for _, pkg := range pkgs {
+		if _, ok := fd.Imports[pkg]; !ok {
+			fd.Imports[pkg] = struct{}{}
+		}
+	}
+}
+
 type structData struct {
 	Name     string
 	Receiver string
@@ -177,6 +177,7 @@ type fieldData struct {
 	Error        string
 	Name, Type   string
 	Source, Kind string
+	Receiver     string
 }
 
 func onlyUppers(origin string) string {

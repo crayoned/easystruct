@@ -7,12 +7,12 @@ import (
 	"{{ $key }}"
 	{{- end }}
 )
-{{range $st := .Structs}}
-func({{ $st.Receiver }} *{{ .Name }}) FromRequest(r *http.Request) error {
+{{range .Structs}}
+func ({{ .Receiver }} *{{ .Name }}) FromRequest(r *http.Request) error {
 	{{ range .Fields -}}
 	{{- if eq .Kind "varchar" -}}
 	if sval := {{ .Source }}; sval != "" {
-		{{ $st.Receiver }}.{{ .Name }} = {{ .Type }}(sval)
+		{{ .Receiver }}.{{ .Name }} = {{ .Type }}(sval)
 	}
 	{{- end -}}
 	{{- if eq .Kind "integer" -}} 
@@ -21,7 +21,7 @@ func({{ $st.Receiver }} *{{ .Name }}) FromRequest(r *http.Request) error {
 		if err != nil {
 			return fmt.Errorf({{ .Error }}, err)
 		}
-		{{ $st.Receiver }}.{{ .Name }} = {{ .Type }}(nval)
+		{{ .Receiver }}.{{ .Name }} = {{ .Type }}(nval)
 	}	
 	{{- end }}
 	{{- if eq .Kind "double" -}} 
@@ -30,7 +30,7 @@ func({{ $st.Receiver }} *{{ .Name }}) FromRequest(r *http.Request) error {
 		if err != nil {
 			return fmt.Errorf({{ .Error }}, err)
 		}
-		{{ $st.Receiver }}.{{ .Name }} = {{ .Type }}(nval)
+		{{ .Receiver }}.{{ .Name }} = {{ .Type }}(nval)
 	}	
 	{{- end }}
 	{{- if eq .Kind "boolean" -}} 
@@ -39,47 +39,47 @@ func({{ $st.Receiver }} *{{ .Name }}) FromRequest(r *http.Request) error {
 		if err != nil {
 			return fmt.Errorf({{ .Error }}, err)
 		}
-		{{ $st.Receiver }}.{{ .Name }} = bval
+		{{ .Receiver }}.{{ .Name }} = bval
 	}	
 	{{- end }}
 	{{- if eq .Kind "strings" -}} 
 	if sval := {{ .Source }}; sval != "" {
-		{{ $st.Receiver }}.{{ .Name }} = strings.Split(sval, ",")
+		{{ .Receiver }}.{{ .Name }} = strings.Split(sval, ",")
 	}	
 	{{- end }}
 	{{- if eq .Kind "integers" -}} 
 	if svals := {{ .Source }}; svals != "" {
-		{{ $st.Receiver }}.{{ .Name }} = make([]{{ .Type }}, 0, strings.Count(svals, ","))
+		{{ .Receiver }}.{{ .Name }} = make([]{{ .Type }}, 0, strings.Count(svals, ","))
 		for _, sval := range strings.Split(svals, ",") {
 			nval, err := strconv.Atoi(sval)
 			if err != nil {
 				return fmt.Errorf({{ .Error }}, err)
 			}
-			{{ $st.Receiver }}.{{ .Name }} = append({{ $st.Receiver }}.{{ .Name }}, {{ .Type }}(nval))
+			{{ .Receiver }}.{{ .Name }} = append({{ .Receiver }}.{{ .Name }}, {{ .Type }}(nval))
 		}
 	}	
 	{{- end }}
 	{{- if eq .Kind "doubles" -}} 
 	if svals := {{ .Source }}; svals != "" {
-		{{ $st.Receiver }}.{{ .Name }} = make([]{{ .Type }}, 0, strings.Count(svals, ","))
+		{{ .Receiver }}.{{ .Name }} = make([]{{ .Type }}, 0, strings.Count(svals, ","))
 		for _, sval := range strings.Split(svals, ",") {
 			nval, err := strconv.ParseFloat(sval, 64)
 			if err != nil {
 				return fmt.Errorf({{ .Error }}, err)
 			}
-			{{ $st.Receiver }}.{{ .Name }} = append({{ $st.Receiver }}.{{ .Name }}, {{ .Type }}(nval))
+			{{ .Receiver }}.{{ .Name }} = append({{ .Receiver }}.{{ .Name }}, {{ .Type }}(nval))
 		}
 	}	
 	{{- end }}
 	{{- if eq .Kind "booleans" -}} 
 	if svals := {{ .Source }}; svals != "" {
-		{{ $st.Receiver }}.{{ .Name }} = make([]{{ .Type }}, 0, strings.Count(svals, ","))
+		{{ .Receiver }}.{{ .Name }} = make([]{{ .Type }}, 0, strings.Count(svals, ","))
 		for _, sval := range strings.Split(svals, ",") {
 			bval, err := strconv.ParseBool(sval)
 			if err != nil {
 				return fmt.Errorf({{ .Error }}, err)
 			}
-			{{ $st.Receiver }}.{{ .Name }} = append({{ $st.Receiver }}.{{ .Name }}, bval)
+			{{ .Receiver }}.{{ .Name }} = append({{ .Receiver }}.{{ .Name }}, bval)
 		}
 	}	
 	{{- end }}
